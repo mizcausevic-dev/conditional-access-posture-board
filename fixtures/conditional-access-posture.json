@@ -1,0 +1,110 @@
+{
+  "snapshots": [
+    {
+      "id": "bundle-workforce",
+      "name": "Workforce access baseline",
+      "scope": "TENANT",
+      "policyStatus": "WATCH",
+      "snapshotStatus": "CURRENT",
+      "tenantPath": "/tenants/kg-prod/policy-bundles/workforce",
+      "coveredApps": 38,
+      "owner": "Identity Security",
+      "policyCount": 14,
+      "collectedAt": "2026-05-30T14:00:00Z"
+    },
+    {
+      "id": "bundle-privileged",
+      "name": "Privileged admin protections",
+      "scope": "POLICY_SET",
+      "policyStatus": "CRITICAL",
+      "snapshotStatus": "STALE",
+      "tenantPath": "/tenants/kg-prod/policy-bundles/privileged-admin",
+      "coveredApps": 12,
+      "owner": "Entra IAM",
+      "policyCount": 8,
+      "collectedAt": "2026-05-27T09:20:00Z"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "gap-admin-report-only",
+      "snapshotId": "bundle-privileged",
+      "resourcePath": "CA-PRIV-Require-MFA-Compliant-Device",
+      "resourceType": "ConditionalAccessPolicy",
+      "scope": "TENANT",
+      "controlFamily": "Policy",
+      "status": "REPORT_ONLY",
+      "expectedState": "Privileged admins must require MFA and compliant device enforcement.",
+      "observedState": "Policy switched to report-only during emergency change window.",
+      "changeWindowHours": 18,
+      "breaksGuardrail": true,
+      "impactsIdentity": true,
+      "note": "Admin policy no longer blocks risky sign-ins."
+    },
+    {
+      "id": "gap-breakglass-exclusion",
+      "snapshotId": "bundle-privileged",
+      "resourcePath": "CA-PRIV-Exclude-Emergency-Accounts",
+      "resourceType": "Group",
+      "scope": "GROUP",
+      "controlFamily": "Exclusion",
+      "status": "CHANGED",
+      "expectedState": "Only two monitored emergency accounts stay excluded.",
+      "observedState": "Nine identities are excluded, including a partner operations user and a legacy service account.",
+      "changeWindowHours": 31,
+      "breaksGuardrail": true,
+      "impactsIdentity": true
+    },
+    {
+      "id": "gap-device-requirement",
+      "snapshotId": "bundle-workforce",
+      "resourcePath": "CA-WF-Require-Compliant-Device",
+      "resourceType": "ConditionalAccessPolicy",
+      "scope": "TENANT",
+      "controlFamily": "Device",
+      "status": "CHANGED",
+      "expectedState": "Browser and desktop access require compliant or hybrid-joined devices.",
+      "observedState": "Device filter not enforced for unmanaged macOS browsers.",
+      "changeWindowHours": 14,
+      "breaksGuardrail": true
+    },
+    {
+      "id": "gap-risk-policy",
+      "snapshotId": "bundle-privileged",
+      "resourcePath": "CA-RISK-SignIn-Protection",
+      "resourceType": "RiskPolicy",
+      "scope": "TENANT",
+      "controlFamily": "Risk",
+      "status": "REMOVED",
+      "expectedState": "Medium-and-above sign-in risk requires MFA or session block.",
+      "observedState": "Sign-in risk policy missing from the privileged policy set.",
+      "changeWindowHours": 41,
+      "breaksGuardrail": true
+    },
+    {
+      "id": "gap-session-controls",
+      "snapshotId": "bundle-workforce",
+      "resourcePath": "CA-WF-SharePoint-Session-Controls",
+      "resourceType": "SessionControl",
+      "scope": "POLICY_SET",
+      "controlFamily": "Session",
+      "status": "CHANGED",
+      "expectedState": "SharePoint access uses sign-in frequency and app-enforced restrictions.",
+      "observedState": "Session controls not configured after recent template split.",
+      "changeWindowHours": 27
+    },
+    {
+      "id": "gap-uncovered-app",
+      "snapshotId": "bundle-workforce",
+      "resourcePath": "ServiceNow HR onboarding",
+      "resourceType": "ServicePrincipal",
+      "scope": "APP",
+      "controlFamily": "App",
+      "status": "ADDED",
+      "expectedState": "Critical SaaS apps are targeted by workforce Conditional Access.",
+      "observedState": "New app is not targeted by baseline policy coverage.",
+      "changeWindowHours": 9,
+      "breaksGuardrail": false
+    }
+  ]
+}
